@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>WR Bank — Админ-панель</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0f1e;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #0a0f1e;
+        }
+
+        .main-content {
+            padding: 20px 16px 90px 16px;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: #0f1222;
+            border: 1px solid #2d3a5e;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-danger {
+            background: rgba(239,68,68,0.2);
+            color: #f87171;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .message {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .message.error { background: rgba(239,68,68,0.2); color: #f87171; }
+        .message.success { background: rgba(34,197,94,0.2); color: #4ade80; }
+
+        .admin-panel {
+            background: rgba(26, 31, 46, 0.8);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-panel h3 {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-card {
+            background: #0f1222;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .user-card:hover {
+            border-color: #3b82f6;
+            background: #1a1f2e;
+        }
+
+        .user-card.selected {
+            border-color: #22c55e;
+            background: rgba(34,197,94,0.1);
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            margin-left: 6px;
+        }
+
+        .verified-badge svg { width: 12px; height: 12px; fill: white; }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(99,102,241,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #2d3a5e;
+            padding-bottom: 12px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            background: rgba(59,130,246,0.2);
+            color: #3b82f6;
+        }
+
+        .balance {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .currency-Ÿ { color: #a78bfa; }
+        .currency-$ { color: #22c55e; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #0f1222;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+    // ========== КОНФИГ ==========
+    const API_BASE_URL = 'https://functions.yandexcloud.net/d4e4te08so9b9ml37hmv';
+    
+    const ADMIN_LOGIN = 'yurskk';
+    const ADMIN_PASSWORD = 'Yu29102011';
+    
+    let adminToken = localStorage.getItem('admin_token');
+    let allUsers = [];
+    let selectedUserId = null;
+    let currentTab = 'users';
+
+    // ========== РАБОТА С СЕРВЕРОМ ==========
+    async function callApi(action, data) {
+        try {
+            const response = await fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, ...data })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('API error:', error);
+            return { success: false, error: 'Сервер недоступен' };
+        }
+    }
+
+    async function adminLogin(username, password) {
+        return await callApi('adminLogin', { username, password });
+    }
+
+    async function getAllUsers() {
+        return await callApi('getAllUsers', { adminId: ADMIN_LOGIN });
+    }
+
+    async function getUserById(userId) {
+        return await callApi('getUserById', { adminId: ADMIN_LOGIN, userId });
+    }
+
+    async function issueMoney(userId, accountId, amount, note) {
+        return await callApi('issueMoney', { adminId: ADMIN_LOGIN, userId, accountId, amount, note });
+    }
+
+    async function toggleVerification(userId) {
+        return await callApi('toggleVerification', { adminId: ADMIN_LOGIN, userId });
+    }
+
+    // ========== UI ==========
+    function render() {
+        if (!adminToken) {
+            renderLogin();
+        } else {
+            renderAdminPanel();
+        }
+    }
+
+    function renderLogin() {
+        document.getElementById('root').innerHTML = `
+            <div class="app">
+                <div class="login-container">
+                    <div class="logo">WR Bank</div>
+                    <div class="admin-badge">🔐 АДМИН-ПАНЕЛЬ</div>
+                    <h1>Вход для администратора</h1>
+                    <p style="color:#94a3b8;margin-bottom:32px">Только для авторизованных сотрудников</p>
+                    <div class="form-group">
+                        <label>Логин</label>
+                        <input type="text" id="loginInput" placeholder="Логин">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="passwordInput" placeholder="Пароль">
+                    </div>
+                    <button class="btn" id="loginBtn">Войти</button>
+                    <div id="loginMsg" class="message"></div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('loginBtn')?.addEventListener('click', async () => {
+            const username = document.getElementById('loginInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const msgDiv = document.getElementById('loginMsg');
+            
+            const result = await adminLogin(username, password);
+            if (result.success) {
+                adminToken = result.token;
+                localStorage.setItem('admin_token', adminToken);
+                renderAdminPanel();
+            } else {
+                msgDiv.innerHTML = '<div class="message error">Неверный логин или пароль</div>';
+            }
+        });
+    }
+
+    async function renderAdminPanel() {
+        const root = document.getElementById('root');
+        root.innerHTML = `
+            <div class="app">
+                <div class="main-content">
+                    <div class="flex-between" style="margin-bottom:20px">
+                        <div>
+                            <h2>👑 Админ-панель</h2>
+                            <p style="color:#94a3b8;font-size:12px">Управление пользователями</p>
+                        </div>
+                        <button id="logoutBtn" class="badge" style="background:rgba(239,68,68,0.2);border:none;color:#f87171;padding:8px 16px">Выйти</button>
+                    </div>
+                    
+                    <div class="tab-bar">
+                        <button class="tab ${currentTab === 'users' ? 'active' : ''}" data-tab="users">👥 Пользователи</button>
+                        <button class="tab ${currentTab === 'money' ? 'active' : ''}" data-tab="money">💰 Выдача денег</button>
+                        <button class="tab ${currentTab === 'verify' ? 'active' : ''}" data-tab="verify">✅ Верификация</button>
+                        <button class="tab ${currentTab === 'stats' ? 'active' : ''}" data-tab="stats">📊 Статистика</button>
+                    </div>
+                    
+                    <div id="tabContent"></div>
+                </div>
+            </div>
+        `;
+        
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                currentTab = tab.dataset.tab;
+                renderAdminPanel();
+            });
+        });
+        
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            localStorage.removeItem('admin_token');
+            adminToken = null;
+            render();
+        });
+        
+        const result = await getAllUsers();
+        if (result.success) {
+            allUsers = result.users;
+        }
+        
+        const tabContent = document.getElementById('tabContent');
+        
+        if (currentTab === 'users') {
+            tabContent.innerHTML = `
+                <div class="admin-panel">
+                    <h3>👥 Все пользователи (${allUsers.length})</h3>
+                    <div id="usersList" style="max-height:500px;overflow-y:auto"></div>
+                </div>
+                <div id="selectedUserInfo" class="admin-panel" style="display:none"></div>
+            `;
+            
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = allUsers.map(user => `
+                <div class="user-card ${selectedUserId === user.id ? 'selected' : ''}" data-user-id="${user.id}">
+                    <div class="flex-between">
+                        <div>
+                            <strong>${user.name || 'Без имени'}</strong>
+                            ${user.isVerified ? '<span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>' : ''}
+                        </div>
+                        <div class="badge">${user.id.slice(0, 8)}...</div>
+                    </div>
+                    <div style="font-size:12px;color:#64748b;margin-top:4px">
+                        ${user.email || 'Нет email'} | ${user.phone || 'Нет телефона'}
+                    </div>
+                    <div style="margin-top:8px;display:flex;gap:8px">
+                        <span class="badge">💰 ${user.totalBalance.toFixed(2)} WR</span>
+                        <span class="badge">💳 ${user.accounts.reduce((s,a)=>s+a.cardsCount,0)} карт</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.user-card').forEach(card => {
+                card.addEventListener('click', async () => {
+                    selectedUserId = card.dataset.userId;
+                    const userResult = await getUserById(selectedUserId);
+                    if (userResult.success) {
+                        const user = userResult.user;
+                        const infoDiv = document.getElementById('selectedUserInfo');
+                        infoDiv.style.display = 'block';
+                        infoDiv.innerHTML = `
+                            <h3>📋 Детали пользователя</h3>
+                            <div><strong>ID:</strong> ${user.id}</div>
+                            <div><strong>Имя:</strong> ${user.name || '—'}</div>
+                            <div><strong>Email:</strong> ${user.email || '—'}</div>
+                            <div><strong>Телефон:</strong> ${user.phone || '—'}</div>
+                            <div><strong>Верифицирован:</strong> ${user.isVerified ? '✅ Да' : '❌ Нет'}</div>
+                            <div style="margin-top:12px"><strong>Счета:</strong></div>
+                            ${user.accounts.map(acc => `
+                                <div style="background:#0f1222;border-radius:12px;padding:8px;margin-top:8px">
+                                    <div class="flex-between">
+                                        <span class="currency-${acc.currency === 'Ÿ' ? 'Ÿ' : '$'}">${acc.currency}</span>
+                                        <span class="balance">${acc.balance.toFixed(2)} ${acc.currency === 'Ÿ' ? 'WR' : 'USD'}</span>
+                                    </div>
+                                    <div style="font-size:11px;color:#64748b">${acc.number}</div>
+                                    <div>${acc.cards.length}/3 карт</div>
+                                </div>
+                            `).join('')}
+                            <button class="btn" id="selectForAction" style="margin-top:12px">Выбрать для действий</button>
+                        `;
+                        document.getElementById('selectForAction')?.addEventListener('click', () => {
+                            selectedUserId = user.id;
+                            renderAdminPanel();
+                        });
+                    }
+                });
+            });
+        }
+        
+        if (currentTab === 'money') {
+            // Загружаем счета выбранного пользователя
+            let accountsHtml = '<option value="">Сначала выберите пользователя</option>';
+            if (selectedUserId) {
+                const userResult = await getUserById(selectedUserId);
+                if (userResult.success) {
+                    accountsHtml = userResult.user.accounts.map(acc => 
+                        `<option value="${acc.id}">${acc.currency} — баланс: ${acc.balance.toFixed(2)}</option>`
+                    ).join('');
+                }
+            }
+            
+            tabContent.innerHTML = `
+                <div class="admin-panel">
+                    <h3>💰 Выдача денег</h3>
+                    <div class="form-group">
+                        <label>ID пользователя</label>
+                        <input type="text" id="moneyUserId" placeholder="Введите ID" value="${selectedUserId || ''}">
+                        <div id="userPreview" style="font-size:12px;color:#94a3b8;margin-top:4px"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Счёт</label>
+                        <select id="moneyAccountId">${accountsHtml}</select>
+                    </div>
+                    <div class="form-group">
+                        <label>Сумма</label>
+                        <input type="number" id="moneyAmount" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Назначение</label>
+                        <input type="text" id="moneyNote" placeholder="Например: Бонус, Зарплата">
+                    </div>
+                    <button class="btn btn-success" id="issueMoneyBtn">💸 Выдать деньги</button>
+                    <div id="moneyMsg" class="message"></div>
+                </div>
+            `;
+            
+            const userIdInput = document.getElementById('moneyUserId');
+            const previewDiv = document.getElementById('userPreview');
+            
+            userIdInput?.addEventListener('input', async (e) => {
+                const userId = e.target.value;
+                if (userId) {
+                    const userResult = await getUserById(userId);
+                    if (userResult.success) {
+                        previewDiv.innerHTML = `👤 ${userResult.user.name || 'Без имени'} | ${userResult.user.email || ''}`;
+                        const select = document.getElementById('moneyAccountId');
+                        select.innerHTML = userResult.user.accounts.map(acc => 
+                            `<option value="${acc.id}">${acc.currency} — баланс: ${acc.balance.toFixed(2)}</option>`
+                        ).join('');
+                    } else {
+                        previewDiv.innerHTML = '❌ Пользователь не найден';
+                    }
+                } else {
+                    previewDiv.innerHTML = '';
+                }
+            });
+            
+            document.getElementById('issueMoneyBtn')?.addEventListener('click', async () => {
+                const userId = document.getElementById('moneyUserId').value;
+                const accountId = document.getElementById('moneyAccountId').value;
+                const amount = parseFloat(document.getElementById('moneyAmount').value);
+                const note = document.getElementById('moneyNote').value;
+                const msgDiv = document.getElementById('moneyMsg');
+                
+                if (!userId || !accountId || isNaN(amount) || amount <= 0) {
+                    msgDiv.innerHTML = '<div class="message error">Заполните все поля</div>';
+                    return;
+                }
+                
+                msgDiv.innerHTML = '<div class="message">Обработка...</div>';
+                const result = await issueMoney(userId, accountId, amount, note);
+                if (result.success) {
+                    msgDiv.innerHTML = '<div class="message success">Деньги успешно выданы!</div>';
+                    document.getElementById('moneyAmount').value = '';
+                    const usersResult = await getAllUsers();
+                    if (usersResult.success) allUsers = usersResult.users;
+                } else {
+                    msgDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+                }
+            });
+        }
+        
+        if (currentTab === 'verify') {
+            tabContent.innerHTML = `
+                <div class="admin-panel">
+                    <h3>✅ Управление верификацией</h3>
+                    <div class="form-group">
+                        <label>ID пользователя</label>
+                        <input type="text" id="verifyUserId" placeholder="Введите ID" value="${selectedUserId || ''}">
+                    </div>
+                    <div id="verifyPreview" style="background:#0f1222;border-radius:12px;padding:12px;margin-bottom:16px;display:none"></div>
+                    <button class="btn" id="toggleVerifyBtn">🔄 Выдать/снять галочку</button>
+                    <div id="verifyMsg" class="message"></div>
+                </div>
+            `;
+            
+            const verifyInput = document.getElementById('verifyUserId');
+            const previewDiv = document.getElementById('verifyPreview');
+            
+            verifyInput?.addEventListener('input', async (e) => {
+                const userId = e.target.value;
+                if (userId) {
+                    const userResult = await getUserById(userId);
+                    if (userResult.success) {
+                        previewDiv.style.display = 'block';
+                        previewDiv.innerHTML = `
+                            <div class="flex-between">
+                                <div>
+                                    <strong>${userResult.user.name || 'Без имени'}</strong>
+                                    ${userResult.user.isVerified ? '<span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>' : ''}
+                                </div>
+                                <div class="badge">${userResult.user.isVerified ? '✅ Верифицирован' : '❌ Не верифицирован'}</div>
+                            </div>
+                            <div style="font-size:12px;color:#64748b;margin-top:4px">ID: ${userId}</div>
+                        `;
+                    } else {
+                        previewDiv.style.display = 'none';
+                    }
+                } else {
+                    previewDiv.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('toggleVerifyBtn')?.addEventListener('click', async () => {
+                const userId = document.getElementById('verifyUserId').value;
+                const msgDiv = document.getElementById('verifyMsg');
+                
+                if (!userId) {
+                    msgDiv.innerHTML = '<div class="message error">Введите ID пользователя</div>';
+                    return;
+                }
+                
+                const result = await toggleVerification(userId);
+                if (result.success) {
+                    msgDiv.innerHTML = `<div class="message success">Статус обновлён! Теперь: ${result.isVerified ? '✅ Верифицирован' : '❌ Не верифицирован'}</div>`;
+                    const userResult = await getUserById(userId);
+                    if (userResult.success) {
+                        previewDiv.innerHTML = `
+                            <div class="flex-between">
+                                <div>
+                                    <strong>${userResult.user.name || 'Без имени'}</strong>
+                                    ${userResult.user.isVerified ? '<span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>' : ''}
+                                </div>
+                                <div class="badge">${userResult.user.isVerified ? '✅ Верифицирован' : '❌ Не верифицирован'}</div>
+                            </div>
+                        `;
+                    }
+                    const usersResult = await getAllUsers();
+                    if (usersResult.success) allUsers = usersResult.users;
+                } else {
+                    msgDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+                }
+            });
+        }
+        
+        if (currentTab === 'stats') {
+            const totalUsers = allUsers.length;
+            const totalBalance = allUsers.reduce((s, u) => s + u.totalBalance, 0);
+            const totalCards = allUsers.reduce((s, u) => s + u.accounts.reduce((a, acc) => a + acc.cardsCount, 0), 0);
+            const verifiedCount = allUsers.filter(u => u.isVerified).length;
+            
+            tabContent.innerHTML = `
+                <div class="admin-panel">
+                    <h3>📊 Статистика</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div style="font-size:12px;color:#94a3b8">Пользователей</div><div class="stat-value">${totalUsers}</div></div>
+                        <div class="stat-card"><div style="font-size:12px;color:#94a3b8">Всего средств</div><div class="stat-value">${totalBalance.toFixed(2)} WR</div></div>
+                        <div class="stat-card"><div style="font-size:12px;color:#94a3b8">Выпущено карт</div><div class="stat-value">${totalCards}</div></div>
+                        <div class="stat-card"><div style="font-size:12px;color:#94a3b8">Верифицировано</div><div class="stat-value">${verifiedCount}</div></div>
+                    </div>
+                    <div style="margin-top:16px;background:#0f1222;border-radius:16px;padding:12px">
+                        <div class="flex-between" style="margin-bottom:8px"><span>Активность</span><span>Последние 7 дней</span></div>
+                        <div style="height:4px;background:#2d3a5e;border-radius:2px;overflow:hidden"><div style="width:45%;height:100%;background:#22c55e"></div></div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    render();
+</script>
+</body>
+  </html>
