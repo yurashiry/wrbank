@@ -3,35 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>WR Bank — внутренний банк</title>
+    <title>WR Bank</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
-            color: #ffffff;
+            color: #fff;
             min-height: 100vh;
         }
-
         .app {
             max-width: 480px;
             margin: 0 auto;
             min-height: 100vh;
-            position: relative;
-            background: rgba(10, 15, 30, 0.4);
+            padding-bottom: 80px;
         }
-
-        .main-content {
-            padding: 20px 20px 90px 20px;
-            min-height: 100vh;
-        }
-
-        /* Страница входа */
+        /* страница входа */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -41,27 +32,14 @@
             padding: 20px;
             text-align: center;
         }
-
         .logo {
             font-size: 48px;
             font-weight: 800;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             margin-bottom: 16px;
         }
-
-        .login-title {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .login-subtitle {
-            color: #94a3b8;
-            margin-bottom: 48px;
-        }
-
         .yandex-btn {
             background: #ffcc00;
             color: #000;
@@ -71,52 +49,44 @@
             font-weight: 600;
             font-size: 16px;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 12px;
-            transition: transform 0.2s;
-            font-family: inherit;
+            margin-top: 32px;
         }
-
-        .yandex-btn:active {
-            transform: scale(0.98);
-        }
-
-        .yandex-icon {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* Круглая нижняя навигация */
+        /* навигация */
         .bottom-nav {
             position: fixed;
-            bottom: 20px;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 40px);
+            width: calc(100% - 32px);
             max-width: 400px;
             background: rgba(20, 28, 45, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 60px;
             display: flex;
             justify-content: space-around;
-            align-items: center;
-            padding: 8px 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
-            z-index: 1000;
+            padding: 8px 12px;
+            z-index: 100;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
             padding: 6px 12px;
             border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-
+        .nav-item.active .nav-icon-wrapper {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+        }
+        .nav-item.active .nav-icon {
+            stroke: white;
+        }
         .nav-icon-wrapper {
             width: 44px;
             height: 44px;
@@ -124,298 +94,55 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: all 0.2s ease;
         }
-
         .nav-icon {
             width: 24px;
             height: 24px;
             stroke: #8e9aaf;
-            transition: all 0.2s ease;
             fill: none;
             stroke-width: 2;
         }
-
-        .nav-item.active .nav-icon-wrapper {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        .nav-item.active .nav-icon {
-            stroke: white;
-        }
-
-        .nav-item.active .nav-label {
-            color: #a78bfa;
-            font-weight: 600;
-        }
-
         .nav-label {
             font-size: 11px;
-            font-weight: 500;
             color: #8e9aaf;
         }
-
-        .nav-item:active {
-            transform: scale(0.95);
-        }
-
-        /* Счета */
-        .accounts-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
+        /* карточки счетов */
         .account-card {
             background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 20px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .account-card.active {
-            border: 2px solid #6366f1;
-            background: linear-gradient(135deg, #1e293b, #111827);
-        }
-
         .account-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 12px;
         }
-
         .account-currency {
             font-size: 24px;
             font-weight: 700;
         }
-
-        .account-currency.Ÿ { color: #a78bfa; }
-        .account-currency.$ { color: #22c55e; }
-
         .account-balance {
             font-size: 20px;
             font-weight: 600;
         }
-
-        .account-number {
-            font-size: 12px;
-            color: #94a3b8;
-            font-family: monospace;
-        }
-
-        .cards-badge {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            background: rgba(99, 102, 241, 0.2);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            color: #a78bfa;
-        }
-
-        /* Карты */
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .card {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .card-logo {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
-            width: 60px;
-            height: auto;
-            opacity: 0.8;
-        }
-
-        .card-logo img {
-            width: 100%;
-            height: auto;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .card-brand {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .card-chip {
-            width: 40px;
-            height: 32px;
-            background: linear-gradient(135deg, #ffd700, #ffb347);
-            border-radius: 8px;
-        }
-
-        .card-number {
-            font-family: monospace;
-            font-size: 18px;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            color: #e2e8f0;
-        }
-
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #94a3b8;
-        }
-
-        .card-holder span, .card-expiry span {
-            display: block;
-            font-size: 9px;
-            margin-bottom: 4px;
-        }
-
-        /* Выбор сети карты */
-        .network-selector {
-            display: flex;
-            gap: 16px;
-            margin: 16px 0;
-        }
-
-        .network-option {
-            flex: 1;
-            background: rgba(30, 41, 59, 0.6);
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .network-option.selected {
-            border-color: #6366f1;
-            background: rgba(99, 102, 241, 0.2);
-        }
-
-        .network-logo {
-            width: 50px;
-            height: auto;
-            margin-bottom: 8px;
-        }
-
-        .network-logo img {
-            width: 100%;
-            height: auto;
-        }
-
-        /* Кнопки */
         .btn {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             border: none;
-            padding: 14px 24px;
+            padding: 14px;
             border-radius: 40px;
             color: white;
             font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
             width: 100%;
-            font-family: inherit;
-            transition: transform 0.2s;
+            margin-top: 12px;
+            cursor: pointer;
         }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-        }
-
-        /* Транзакции */
-        .transactions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .transaction-item {
-            background: rgba(30, 41, 59, 0.4);
-            border-radius: 16px;
-            padding: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .transaction-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .transaction-title {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .transaction-date {
-            font-size: 10px;
+        .empty-state {
+            text-align: center;
+            padding: 48px;
             color: #64748b;
         }
-
-        .transaction-note {
-            font-size: 11px;
-            color: #64748b;
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .transaction-amount.positive {
-            color: #22c55e;
-        }
-
-        .transaction-amount.negative {
-            color: #ef4444;
-        }
-
-        /* Модалка */
         .modal {
             display: none;
             position: fixed;
@@ -423,913 +150,419 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2000;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
         }
-
         .modal.active {
             display: flex;
         }
-
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
-        }
-
         .modal-content {
-            position: relative;
             background: #1e293b;
             border-radius: 28px;
-            width: calc(100% - 40px);
-            max-width: 380px;
             padding: 24px;
-            z-index: 2001;
-            max-height: 80vh;
-            overflow-y: auto;
+            width: 90%;
+            max-width: 360px;
         }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            color: white;
-            cursor: pointer;
-        }
-
         .form-group {
             margin-bottom: 16px;
         }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 8px;
-        }
-
         .form-group input, .form-group select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px;
             background: #0f172a;
             border: 1px solid #334155;
             border-radius: 12px;
             color: white;
-            font-size: 16px;
-            font-family: inherit;
         }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #6366f1;
-        }
-
         .message {
-            margin-top: 16px;
-            padding: 12px;
+            margin-top: 12px;
+            padding: 10px;
             border-radius: 12px;
+            text-align: center;
             font-size: 13px;
-            text-align: center;
         }
-
-        .message.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-        }
-
-        .message.success {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-            color: #64748b;
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: rgba(30, 41, 59, 0.6);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .profile-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 600;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-info h3 {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-
-        .profile-info p {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .bank-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .bank-name {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 16px 16px 90px 16px;
-            }
-            .bottom-nav {
-                width: calc(100% - 20px);
-                bottom: 10px;
-            }
-            .nav-icon-wrapper {
-                width: 40px;
-                height: 40px;
-            }
-        }
+        .message.error { background: rgba(239,68,68,0.2); color: #f87171; }
+        .message.success { background: rgba(34,197,94,0.2); color: #4ade80; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+<div id="root"></div>
 
-    <script>
-        // ========== КОНФИГУРАЦИЯ ==========
-        const YANDEX_CLIENT_ID = '326bda7e29c54835b4683bc71190b054';
-        const API_BASE_URL = 'https://functions.yandexcloud.net/d4e4te08so9b9ml37hmv';
-        const REDIRECT_URI = 'https://yurashiry.github.io/wrbank';
+<script>
+    // ========== КОНФИГ ==========
+    const YANDEX_CLIENT_ID = '326bda7e29c54835b4683bc71190b054';
+    const API_BASE_URL = 'https://functions.yandexcloud.net/d4e4te08so9b9ml37hmv';
+    // Автоматически определяем redirect_uri (текущий адрес страницы)
+    const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+    let currentUser = null;
+    let currentPage = 'dashboard';
+
+    // ---------- Яндекс OAuth ----------
+    function getTokenFromUrl() {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        if (token) {
+            localStorage.setItem('yandex_token', token);
+            // Очищаем hash из URL, чтобы не мешал
+            window.history.replaceState(null, '', window.location.pathname);
+            return token;
+        }
+        return localStorage.getItem('yandex_token');
+    }
+
+    function redirectToYandexAuth() {
+        const authUrl = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+        window.location.href = authUrl;
+    }
+
+    async function fetchYandexUser(token) {
+        try {
+            const resp = await fetch('https://login.yandex.ru/info?format=json', {
+                headers: { 'Authorization': `OAuth ${token}` }
+            });
+            const data = await resp.json();
+            return {
+                id: data.id,
+                name: data.real_name || data.login,
+                email: data.default_email,
+                phone: data.default_phone?.number || '—',
+                avatar: data.default_avatar_id ? `https://avatars.yandex.net/get-yapic/${data.default_avatar_id}/islands-200` : null
+            };
+        } catch(e) {
+            console.error('Ошибка получения данных:', e);
+            return null;
+        }
+    }
+
+    // ---------- API (заглушка, пока функция не готова) ----------
+    async function callApi(action, data) {
+        try {
+            const resp = await fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, ...data })
+            });
+            return await resp.json();
+        } catch(e) {
+            console.warn('API не отвечает, используем localStorage');
+            // Если функция не работает — используем локальное демо-хранилище
+            return null;
+        }
+    }
+
+    async function loadUserFromServer(userId) {
+        // Пытаемся получить из облачной функции
+        const result = await callApi('getUser', { userId });
+        if (result && result.success) return result.user;
         
-        // Состояние
-        let currentUser = null;
-        let currentAccount = null;
-        let currentPage = 'dashboard';
+        // Если нет — берём из localStorage или создаём демо-пользователя
+        let local = localStorage.getItem(`wr_user_${userId}`);
+        if (local) return JSON.parse(local);
         
-        // Валюты
-        const CURRENCIES = {
-            'Ÿ': { name: 'ATY', symbol: 'Ÿ', color: '#a78bfa' },
-            '$': { name: 'USD', symbol: '$', color: '#22c55e' }
+        // Создаём нового пользователя с 2 счетами
+        const newUser = {
+            id: userId,
+            name: 'Загрузка...',
+            email: '',
+            phone: '',
+            avatar: null,
+            accounts: [
+                { id: 'acc1', currency: 'Ÿ', balance: 1250.75, number: 'WR****1234', cards: [] },
+                { id: 'acc2', currency: '$', balance: 350.50, number: 'WR****5678', cards: [] }
+            ],
+            transactions: []
         };
+        localStorage.setItem(`wr_user_${userId}`, JSON.stringify(newUser));
+        return newUser;
+    }
+
+    async function saveUserToServer(user) {
+        await callApi('updateProfile', user);
+        localStorage.setItem(`wr_user_${user.id}`, JSON.stringify(user));
+    }
+
+    async function createAccount(userId, currency) {
+        const user = await loadUserFromServer(userId);
+        if (user.accounts.length >= 7) {
+            return { success: false, error: 'Максимум 7 счетов' };
+        }
+        user.accounts.push({
+            id: 'acc' + Date.now(),
+            currency: currency,
+            balance: 0,
+            number: `WR****${Math.floor(1000+Math.random()*9000)}`,
+            cards: []
+        });
+        await saveUserToServer(user);
+        if (currentUser?.id === userId) currentUser = user;
+        return { success: true };
+    }
+
+    async function transferMoney(senderId, recipientId, amount, currency, note, accountId) {
+        const sender = await loadUserFromServer(senderId);
+        const recipient = await loadUserFromServer(recipientId);
         
-        // Ссылки на логотипы карт
-        const CARD_LOGOS = {
-            'Visa1': '/visa1.jpg',
-            'Visa2': '/visa2.jpg',
-            'Mastercard1': '/mc1.jpg',
-            'Mastercard2': '/mc2.jpg'
+        const acc = sender.accounts.find(a => a.id === accountId);
+        if (!acc) return { success: false, error: 'Счёт не найден' };
+        if (acc.balance < amount) return { success: false, error: 'Недостаточно средств' };
+        
+        acc.balance -= amount;
+        
+        let recipientAcc = recipient.accounts.find(a => a.currency === currency);
+        if (!recipientAcc) {
+            recipientAcc = { id: 'acc'+Date.now(), currency, balance: 0, number: `WR****${Math.floor(1000+Math.random()*9000)}`, cards: [] };
+            recipient.accounts.push(recipientAcc);
+        }
+        recipientAcc.balance += amount;
+        
+        const txOut = {
+            id: Date.now(), type: 'outgoing', amount, currency, recipient: recipientId,
+            recipientName: recipient.name, note, date: new Date().toISOString(), accountId
         };
+        const txIn = {
+            id: Date.now(), type: 'incoming', amount, currency, sender: senderId,
+            senderName: sender.name, note, date: new Date().toISOString(), accountId: recipientAcc.id
+        };
+        sender.transactions = [txOut, ...(sender.transactions || [])];
+        recipient.transactions = [txIn, ...(recipient.transactions || [])];
+        
+        await saveUserToServer(sender);
+        await saveUserToServer(recipient);
+        if (currentUser?.id === senderId) currentUser = sender;
+        return { success: true };
+    }
 
-        // ========== YANDEX OAUTH ==========
-        function redirectToYandexAuth() {
-            const authUrl = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
-            window.location.href = authUrl;
-        }
-
-        function getTokenFromUrl() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            if (token) {
-                localStorage.setItem('yandex_token', token);
-                window.location.hash = '';
-                return token;
-            }
-            return localStorage.getItem('yandex_token');
-        }
-
-        async function fetchYandexUserInfo(token) {
-            try {
-                const response = await fetch('https://login.yandex.ru/info?format=json', {
-                    headers: { 'Authorization': `OAuth ${token}` }
-                });
-                const data = await response.json();
-                return {
-                    id: data.id,
-                    name: data.real_name || data.display_name || data.login,
-                    email: data.default_email,
-                    phone: data.default_phone?.number || 'Не указан',
-                    avatar: data.default_avatar_id ? `https://avatars.yandex.net/get-yapic/${data.default_avatar_id}/islands-200` : null,
-                    login: data.login
-                };
-            } catch (error) {
-                console.error('Ошибка получения данных:', error);
-                return null;
-            }
-        }
-
-        // ========== API ВЫЗОВЫ ==========
-        async function callApi(action, data) {
-            try {
-                const response = await fetch(API_BASE_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action, ...data })
-                });
-                return await response.json();
-            } catch (error) {
-                console.error('API error:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        async function registerUser(userData) {
-            const result = await callApi('register', userData);
-            if (result.success) return result.user;
-            
-            // Демо режим
-            const demoUser = {
-                ...userData,
-                balance: 1000,
-                accounts: [
-                    { id: 'acc1', currency: 'Ÿ', balance: 750, number: 'WR****1234', cards: [] },
-                    { id: 'acc2', currency: '$', balance: 250, number: 'WR****5678', cards: [] }
-                ],
-                transactions: []
-            };
-            localStorage.setItem(`wr_user_${userData.id}`, JSON.stringify(demoUser));
-            return demoUser;
-        }
-
-        async function getUserData(userId) {
-            const result = await callApi('getUser', { userId });
-            if (result.success) return result.user;
-            
-            const local = localStorage.getItem(`wr_user_${userId}`);
-            return local ? JSON.parse(local) : null;
-        }
-
-        async function transferMoney(senderId, recipientId, amount, currency, note, accountId) {
-            const result = await callApi('transfer', { senderId, recipientId, amount, currency, note, accountId });
-            if (result.success) return result;
-            
-            // Демо режим
-            const senderStr = localStorage.getItem(`wr_user_${senderId}`);
-            const recipientStr = localStorage.getItem(`wr_user_${recipientId}`);
-            
-            if (!senderStr || !recipientStr) return { success: false, error: 'Пользователь не найден' };
-            
-            const sender = JSON.parse(senderStr);
-            const recipient = JSON.parse(recipientStr);
-            
-            const senderAccount = sender.accounts.find(a => a.id === accountId);
-            if (!senderAccount) return { success: false, error: 'Счёт не найден' };
-            if (senderAccount.balance < amount) return { success: false, error: 'Недостаточно средств' };
-            
-            senderAccount.balance -= amount;
-            
-            const recipientAccount = recipient.accounts.find(a => a.currency === currency);
-            if (recipientAccount) {
-                recipientAccount.balance += amount;
-            } else {
-                recipient.accounts.push({
-                    id: 'acc' + Date.now(),
-                    currency: currency,
-                    balance: amount,
-                    number: `WR****${Math.floor(1000 + Math.random() * 9000)}`,
-                    cards: []
-                });
-            }
-            
-            const transaction = {
-                id: Date.now(),
-                type: 'outgoing',
-                amount: amount,
-                currency: currency,
-                recipient: recipientId,
-                recipientName: recipient.name,
-                note: note,
-                date: new Date().toISOString(),
-                accountId: accountId
-            };
-            
-            const incomingTransaction = {
-                id: Date.now(),
-                type: 'incoming',
-                amount: amount,
-                currency: currency,
-                sender: senderId,
-                senderName: sender.name,
-                note: note,
-                date: new Date().toISOString(),
-                accountId: recipientAccount?.id
-            };
-            
-            sender.transactions = [transaction, ...(sender.transactions || [])];
-            recipient.transactions = [incomingTransaction, ...(recipient.transactions || [])];
-            
-            localStorage.setItem(`wr_user_${senderId}`, JSON.stringify(sender));
-            localStorage.setItem(`wr_user_${recipientId}`, JSON.stringify(recipient));
-            
-            if (currentUser?.id === senderId) currentUser = sender;
-            
-            return { success: true };
-        }
-
-        async function issueCard(userId, accountId, network, design) {
-            const result = await callApi('issueCard', { userId, accountId, network, design });
-            if (result.success) return result;
-            
-            const userStr = localStorage.getItem(`wr_user_${userId}`);
-            if (userStr) {
-                const user = JSON.parse(userStr);
-                const account = user.accounts.find(a => a.id === accountId);
-                if (account && account.cards.length < 3) {
-                    const newCard = {
-                        id: Date.now().toString(),
-                        last4: Math.floor(1000 + Math.random() * 9000).toString(),
-                        network: network,
-                        design: design,
-                        expiry: '05/29',
-                        accountId: accountId
-                    };
-                    account.cards.push(newCard);
-                    localStorage.setItem(`wr_user_${userId}`, JSON.stringify(user));
-                    if (currentUser?.id === userId) currentUser = user;
-                    return { success: true, card: newCard };
+    // ---------- Отрисовка UI ----------
+    function render() {
+        const token = getTokenFromUrl();
+        if (!token) {
+            renderLogin();
+        } else if (!currentUser) {
+            document.getElementById('root').innerHTML = '<div style="text-align:center;padding:50px">Загрузка...</div>';
+            fetchYandexUser(token).then(async yUser => {
+                if (yUser) {
+                    let user = await loadUserFromServer(yUser.id);
+                    user.name = yUser.name;
+                    user.email = yUser.email;
+                    user.phone = yUser.phone;
+                    user.avatar = yUser.avatar;
+                    await saveUserToServer(user);
+                    currentUser = user;
+                    renderApp();
+                } else {
+                    renderLogin();
                 }
-            }
-            return { success: false, error: 'Нельзя выпустить больше 3 карт на счёт' };
-        }
-
-        async function createAccount(userId, currency) {
-            const user = currentUser || await getUserData(userId);
-            if (user.accounts.length >= 7) {
-                return { success: false, error: 'Нельзя создать больше 7 счетов' };
-            }
-            
-            const newAccount = {
-                id: 'acc' + Date.now(),
-                currency: currency,
-                balance: 0,
-                number: `WR****${Math.floor(1000 + Math.random() * 9000)}`,
-                cards: []
-            };
-            
-            user.accounts.push(newAccount);
-            
-            if (currentUser?.id === userId) currentUser = user;
-            localStorage.setItem(`wr_user_${userId}`, JSON.stringify(user));
-            
-            return { success: true, account: newAccount };
-        }
-
-        // ========== ОТРИСОВКА ==========
-        function render() {
-            const root = document.getElementById('root');
-            const token = getTokenFromUrl();
-            
-            if (!token) {
-                renderLoginPage(root);
-            } else if (!currentUser) {
-                root.innerHTML = '<div style="text-align:center;padding:50px">Загрузка...</div>';
-                initUser(token).then(() => renderMainApp(root));
-            } else {
-                renderMainApp(root);
-            }
-        }
-
-        function renderLoginPage(root) {
-            root.innerHTML = `
-                <div class="app">
-                    <div class="login-container">
-                        <div class="logo">WR Bank</div>
-                        <h1 class="login-title">Добро пожаловать</h1>
-                        <p class="login-subtitle">Внутренний банк с авторизацией через Яндекс ID</p>
-                        <button class="yandex-btn" id="yandexLoginBtn">
-                            <svg class="yandex-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M2.04 12.15c-.04-.28-.04-.56 0-.84.12-.84.6-1.56 1.32-2.04.72-.48 1.56-.72 2.44-.72 1.28 0 2.36.44 3.2 1.32.84.88 1.28 1.96 1.28 3.24 0 1.28-.44 2.36-1.28 3.24-.84.88-1.92 1.32-3.2 1.32-.88 0-1.72-.24-2.44-.72-.72-.48-1.2-1.2-1.32-2.04-.04-.28-.04-.56 0-.84z"/>
-                            </svg>
-                            Войти через Яндекс ID
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('yandexLoginBtn')?.addEventListener('click', redirectToYandexAuth);
-        }
-
-        async function initUser(token) {
-            const yandexUser = await fetchYandexUserInfo(token);
-            if (yandexUser) {
-                let user = await getUserData(yandexUser.id);
-                if (!user) {
-                    user = await registerUser(yandexUser);
-                }
-                currentUser = user;
-                currentAccount = user.accounts?.[0] || null;
-            }
-        }
-
-        function renderMainApp(root) {
-            if (!currentUser) return;
-            
-            root.innerHTML = `
-                <div class="app">
-                    <main class="main-content" id="mainContent"></main>
-                    <nav class="bottom-nav">
-                        <div class="nav-item" data-page="dashboard">
-                            <div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-6 9 6v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-                            <span class="nav-label">Обзор</span>
-                        </div>
-                        <div class="nav-item" data-page="accounts">
-                            <div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
-                            <span class="nav-label">Счета</span>
-                        </div>
-                        <div class="nav-item" data-page="transfer">
-                            <div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 5 19 12"/><polyline points="5 12 12 19 19 12"/></svg></div>
-                            <span class="nav-label">Перевод</span>
-                        </div>
-                        <div class="nav-item" data-page="transactions">
-                            <div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                            <span class="nav-label">История</span>
-                        </div>
-                        <div class="nav-item" data-page="settings">
-                            <div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-                            <span class="nav-label">Настройки</span>
-                        </div>
-                    </nav>
-                    <div class="modal" id="transferModal">
-                        <div class="modal-overlay"></div>
-                        <div class="modal-content">
-                            <div class="modal-header"><h3>Новый перевод</h3><button class="modal-close">&times;</button></div>
-                            <div class="modal-body" id="transferModalBody"></div>
-                        </div>
-                    </div>
-                    <div class="modal" id="accountModal">
-                        <div class="modal-overlay"></div>
-                        <div class="modal-content">
-                            <div class="modal-header"><h3>Создать новый счёт</h3><button class="modal-close" id="closeAccountModal">&times;</button></div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Выберите валюту</label>
-                                    <select id="newAccountCurrency">
-                                        <option value="Ÿ">Ÿ (ATY)</option>
-                                        <option value="$">$ (USD)</option>
-                                    </select>
-                                </div>
-                                <button class="btn" id="confirmCreateAccount">Создать счёт</button>
-                                <div id="accountMessage" class="message"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal" id="cardModal">
-                        <div class="modal-overlay"></div>
-                        <div class="modal-content">
-                            <div class="modal-header"><h3>Выпустить карту</h3><button class="modal-close" id="closeCardModal">&times;</button></div>
-                            <div class="modal-body" id="cardModalBody"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Навигация
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => loadPage(item.dataset.page));
             });
-            
-            // Закрытие модалок
-            document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
-                el.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
-                        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-                    }
-                });
-            });
-            
-            loadPage('dashboard');
+        } else {
+            renderApp();
         }
+    }
 
-        async function loadPage(page) {
-            currentPage = page;
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.dataset.page === page) item.classList.add('active');
-                else item.classList.remove('active');
-            });
-            
-            const mainContent = document.getElementById('mainContent');
-            if (!mainContent) return;
-            
-            switch(page) {
-                case 'dashboard': await renderDashboard(mainContent); break;
-                case 'accounts': await renderAccounts(mainContent); break;
-                case 'transfer': openTransferModal(); break;
-                case 'transactions': await renderTransactions(mainContent); break;
-                case 'settings': renderSettings(mainContent); break;
-            }
-        }
+    function renderLogin() {
+        const root = document.getElementById('root');
+        root.innerHTML = `
+            <div class="app">
+                <div class="login-container">
+                    <div class="logo">WR Bank</div>
+                    <h1>Добро пожаловать</h1>
+                    <p style="color:#94a3b8">Внутренний банк с Яндекс ID</p>
+                    <button class="yandex-btn" id="yandexBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M2.04 12.15c-.04-.28-.04-.56 0-.84.12-.84.6-1.56 1.32-2.04.72-.48 1.56-.72 2.44-.72 1.28 0 2.36.44 3.2 1.32.84.88 1.28 1.96 1.28 3.24 0 1.28-.44 2.36-1.28 3.24-.84.88-1.92 1.32-3.2 1.32-.88 0-1.72-.24-2.44-.72-.72-.48-1.2-1.2-1.32-2.04-.04-.28-.04-.56 0-.84z"/></svg>
+                        Войти через Яндекс
+                    </button>
+                </div>
+            </div>
+        `;
+        document.getElementById('yandexBtn')?.addEventListener('click', redirectToYandexAuth);
+    }
 
-        async function renderDashboard(container) {
-            const totalBalance = currentUser.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            const transactions = currentUser.transactions || [];
-            const recentTxs = transactions.slice(0, 5);
-            
-            container.innerHTML = `
-                <div class="bank-header">
-                    <div class="bank-name">WR Bank</div>
-                    <div style="font-size:12px;color:#94a3b8">${currentUser.name?.split(' ')[0] || 'User'}</div>
+    function renderApp() {
+        const root = document.getElementById('root');
+        root.innerHTML = `
+            <div class="app">
+                <div class="main-content" id="mainContent"></div>
+                <div class="bottom-nav">
+                    <div class="nav-item" data-page="dashboard"><div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-6 9 6v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="nav-label">Обзор</span></div>
+                    <div class="nav-item" data-page="accounts"><div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><span class="nav-label">Счета</span></div>
+                    <div class="nav-item" data-page="transfer"><div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 5 19 12"/><polyline points="5 12 12 19 19 12"/></svg></div><span class="nav-label">Перевод</span></div>
+                    <div class="nav-item" data-page="transactions"><div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><span class="nav-label">История</span></div>
+                    <div class="nav-item" data-page="settings"><div class="nav-icon-wrapper"><svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><span class="nav-label">Настройки</span></div>
                 </div>
-                <div style="text-align:center;margin-bottom:24px">
-                    <div style="font-size:14px;color:#94a3b8">Общий баланс</div>
-                    <div style="font-size:36px;font-weight:700">${totalBalance.toFixed(2)} WR</div>
-                </div>
-                <button class="btn" id="quickTransferBtn" style="margin-bottom:24px">📤 Быстрый перевод</button>
-                <div style="display:flex;justify-content:space-between;margin-bottom:16px">
-                    <h3 style="font-size:16px">Мои счета</h3>
-                    <button id="createAccountBtn" style="background:none;border:none;color:#a78bfa;font-size:14px">+ Создать</button>
-                </div>
-                <div class="accounts-container" id="accountsPreview"></div>
-                <h3 style="margin:20px 0 12px 0;font-size:16px">Последние операции</h3>
-                <div class="transactions-list" id="recentTransactions"></div>
-            `;
-            
-            // Превью счетов
-            const accountsPreview = document.getElementById('accountsPreview');
-            accountsPreview.innerHTML = currentUser.accounts.slice(0, 2).map(acc => `
-                <div class="account-card" data-account-id="${acc.id}">
-                    <div class="account-header">
-                        <span class="account-currency ${acc.currency === 'Ÿ' ? 'Ÿ' : '$'}">${acc.currency}</span>
-                        <span class="account-balance">${acc.balance.toFixed(2)} ${acc.currency === 'Ÿ' ? 'WR' : 'USD'}</span>
-                    </div>
-                    <div class="account-number">${acc.number}</div>
-                    <div class="cards-badge">${acc.cards.length}/3 карт</div>
+                <div id="transferModal" class="modal"><div class="modal-content" id="transferModalContent"></div></div>
+                <div id="accountModal" class="modal"><div class="modal-content"><h3>Новый счёт</h3><select id="newAccCurrency"><option value="Ÿ">Ÿ (ATY)</option><option value="$">$ (USD)</option></select><button class="btn" id="createAccBtn">Создать</button><div id="accMsg"></div><button class="modal-close" style="margin-top:12px;background:none;border:none;color:#94a3b8">Закрыть</button></div></div>
+            </div>
+        `;
+        
+        // Навигация
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.addEventListener('click', () => loadPage(el.dataset.page));
+        });
+        // Модалки
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => btn.closest('.modal')?.classList.remove('active'));
+        });
+        
+        loadPage('dashboard');
+    }
+
+    async function loadPage(page) {
+        currentPage = page;
+        document.querySelectorAll('.nav-item').forEach(el => {
+            if (el.dataset.page === page) el.classList.add('active');
+            else el.classList.remove('active');
+        });
+        const container = document.getElementById('mainContent');
+        if (!container) return;
+        
+        if (page === 'dashboard') await renderDashboard(container);
+        else if (page === 'accounts') await renderAccounts(container);
+        else if (page === 'transfer') openTransferModal();
+        else if (page === 'transactions') await renderTransactions(container);
+        else if (page === 'settings') renderSettings(container);
+    }
+
+    async function renderDashboard(container) {
+        const total = currentUser.accounts.reduce((s, a) => s + a.balance, 0);
+        const recent = (currentUser.transactions || []).slice(0, 5);
+        container.innerHTML = `
+            <div style="text-align:center;margin:20px 0"><div style="font-size:14px;color:#94a3b8">Общий баланс</div><div style="font-size:36px;font-weight:700">${total.toFixed(2)} WR</div></div>
+            <button class="btn" id="quickTransferBtn">📤 Быстрый перевод</button>
+            <div style="margin:24px 0 12px;display:flex;justify-content:space-between"><h3>Мои счета</h3><button id="newAccountBtn" style="background:none;border:none;color:#a78bfa">+ Создать</button></div>
+            <div id="accountsPreview"></div>
+            <h3 style="margin:20px 0 12px">Последние операции</h3>
+            <div id="recentTxs"></div>
+        `;
+        const preview = document.getElementById('accountsPreview');
+        preview.innerHTML = currentUser.accounts.map(acc => `
+            <div class="account-card">
+                <div class="account-header"><span class="account-currency">${acc.currency}</span><span>${acc.balance.toFixed(2)} ${acc.currency === 'Ÿ' ? 'WR' : 'USD'}</span></div>
+                <div>${acc.number}</div>
+                <div style="font-size:12px;color:#94a3b8">${acc.cards.length}/3 карт</div>
+            </div>
+        `).join('');
+        if (!currentUser.accounts.length) preview.innerHTML = '<div class="empty-state">Нет счетов</div>';
+        
+        const txsDiv = document.getElementById('recentTxs');
+        if (recent.length) {
+            txsDiv.innerHTML = recent.map(tx => `
+                <div style="background:rgba(30,41,59,0.4);border-radius:16px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between">
+                    <div><div>${tx.type === 'outgoing' ? `→ ${tx.recipientName || tx.recipient}` : `← ${tx.senderName || tx.sender}`}</div><div style="font-size:11px;color:#64748b">${new Date(tx.date).toLocaleDateString()}</div>${tx.note ? `<div style="font-size:11px">${tx.note}</div>` : ''}</div>
+                    <div style="color:${tx.type === 'outgoing' ? '#ef4444' : '#22c55e'}">${tx.type === 'outgoing' ? '-' : '+'}${tx.amount} ${tx.currency === 'Ÿ' ? 'WR' : '$'}</div>
                 </div>
             `).join('');
-            
-            if (currentUser.accounts.length === 0) {
-                accountsPreview.innerHTML = '<div class="empty-state">Нет счетов. Создайте первый!</div>';
-            }
-            
-            // Транзакции
-            const recentContainer = document.getElementById('recentTransactions');
-            if (recentTxs.length) {
-                recentContainer.innerHTML = recentTxs.map(tx => `
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-title">${tx.type === 'outgoing' ? `→ ${tx.recipientName || tx.recipient}` : `← ${tx.senderName || tx.sender}`}</div>
-                            <div class="transaction-date">${new Date(tx.date).toLocaleDateString('ru-RU')}</div>
-                            ${tx.note ? `<div class="transaction-note">${tx.note}</div>` : ''}
-                        </div>
-                        <div class="transaction-amount ${tx.type === 'outgoing' ? 'negative' : 'positive'}">
-                            ${tx.type === 'outgoing' ? '-' : '+'}${tx.amount.toFixed(2)} ${tx.currency === 'Ÿ' ? 'WR' : '$'}
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                recentContainer.innerHTML = '<div class="empty-state">Нет транзакций</div>';
-            }
-            
-            document.getElementById('quickTransferBtn')?.addEventListener('click', openTransferModal);
-            document.getElementById('createAccountBtn')?.addEventListener('click', openAccountModal);
-            document.querySelectorAll('.account-card').forEach(el => {
-                el.addEventListener('click', () => {
-                    currentAccount = currentUser.accounts.find(a => a.id === el.dataset.accountId);
-                    loadPage('accounts');
-                });
-            });
+        } else {
+            txsDiv.innerHTML = '<div class="empty-state">Нет операций</div>';
         }
+        
+        document.getElementById('quickTransferBtn')?.addEventListener('click', openTransferModal);
+        document.getElementById('newAccountBtn')?.addEventListener('click', openAccountModal);
+    }
 
-        async function renderAccounts(container) {
-            container.innerHTML = `
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                    <h2>Мои счета</h2>
-                    <button id="createAccountBtn" style="background:#3b82f6;border:none;padding:8px 16px;border-radius:20px;color:white">+ Новый</button>
-                </div>
-                <div class="accounts-container" id="accountsList"></div>
-                <div class="modal" id="cardsModal" style="display:none">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content" id="cardsModalContent"></div>
-                </div>
-            `;
-            
-            const accountsList = document.getElementById('accountsList');
-            accountsList.innerHTML = currentUser.accounts.map(acc => `
-                <div class="account-card" data-account-id="${acc.id}">
-                    <div class="account-header">
-                        <span class="account-currency ${acc.currency === 'Ÿ' ? 'Ÿ' : '$'}">${acc.currency}</span>
-                        <span class="account-balance">${acc.balance.toFixed(2)} ${acc.currency === 'Ÿ' ? 'WR' : 'USD'}</span>
-                    </div>
-                    <div class="account-number">${acc.number}</div>
-                    <div style="display:flex;justify-content:space-between;margin-top:12px">
-                        <div class="cards-badge" style="position:static">${acc.cards.length}/3 карт</div>
-                        <button class="view-cards-btn" data-account-id="${acc.id}" style="background:#3b82f6;border:none;padding:4px 12px;border-radius:16px;font-size:12px">Карты</button>
-                    </div>
+    async function renderAccounts(container) {
+        container.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:20px"><h2>Счета</h2><button id="newAccBtn" style="background:#3b82f6;border:none;padding:8px 16px;border-radius:20px">+ Новый</button></div><div id="accountsList"></div>`;
+        const listDiv = document.getElementById('accountsList');
+        listDiv.innerHTML = currentUser.accounts.map(acc => `
+            <div class="account-card">
+                <div class="account-header"><span class="account-currency">${acc.currency}</span><span>${acc.balance.toFixed(2)} ${acc.currency === 'Ÿ' ? 'WR' : 'USD'}</span></div>
+                <div>${acc.number}</div>
+                <div style="display:flex;justify-content:space-between;margin-top:12px"><span>${acc.cards.length}/3 карт</span><button class="viewCardsBtn" data-id="${acc.id}" style="background:#3b82f6;border:none;padding:4px 12px;border-radius:16px">Карты</button></div>
+            </div>
+        `).join('');
+        document.getElementById('newAccBtn')?.addEventListener('click', openAccountModal);
+        document.querySelectorAll('.viewCardsBtn').forEach(btn => {
+            btn.addEventListener('click', () => alert('Выпуск карт будет добавлен позже!'));
+        });
+    }
+
+    async function renderTransactions(container) {
+        const txs = currentUser.transactions || [];
+        container.innerHTML = `<h2>История</h2><div id="txList"></div>`;
+        const list = document.getElementById('txList');
+        if (txs.length) {
+            list.innerHTML = txs.map(tx => `
+                <div style="background:rgba(30,41,59,0.4);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between">
+                    <div><div>${tx.type === 'outgoing' ? `→ ${tx.recipientName || tx.recipient}` : `← ${tx.senderName || tx.sender}`}</div><div style="font-size:11px;color:#94a3b8">${new Date(tx.date).toLocaleString()}</div>${tx.note ? `<div style="font-size:12px">${tx.note}</div>` : ''}</div>
+                    <div style="color:${tx.type === 'outgoing' ? '#ef4444' : '#22c55e'}">${tx.type === 'outgoing' ? '-' : '+'}${tx.amount} ${tx.currency === 'Ÿ' ? 'WR' : '$'}</div>
                 </div>
             `).join('');
-            
-            if (currentUser.accounts.length === 0) {
-                accountsList.innerHTML = '<div class="empty-state">У вас пока нет счетов. Создайте первый!</div>';
-            }
-            
-            document.getElementById('createAccountBtn')?.addEventListener('click', openAccountModal);
-            document.querySelectorAll('.view-cards-btn').forEach(btn => {
-                btn.addEventListener('click', () => openCardsModal(btn.dataset.accountId));
-            });
+        } else {
+            list.innerHTML = '<div class="empty-state">Нет транзакций</div>';
         }
+    }
 
-        async function openCardsModal(accountId) {
-            const account = currentUser.accounts.find(a => a.id === accountId);
-            if (!account) return;
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal active';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-overlay"></div>
-                <div class="modal-content" style="max-width:400px">
-                    <div class="modal-header">
-                        <h3>Карты счёта ${account.currency}</h3>
-                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
-                    </div>
-                    <div class="cards-container" id="cardsListModal">
-                        ${account.cards.length ? account.cards.map(card => `
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-brand">${card.network}</div>
-                                    <div class="card-chip"></div>
-                                </div>
-                                <div class="card-number">**** **** **** ${card.last4}</div>
-                                <div class="card-details">
-                                    <div class="card-holder"><span>CARDHOLDER</span>${currentUser.name.toUpperCase()}</div>
-                                    <div class="card-expiry"><span>EXPIRES</span>${card.expiry}</div>
-                                </div>
-                                <div class="card-logo">
-                                    <img src="${card.design === 'design1' ? (card.network === 'Visa' ? '/visa1.jpg' : '/mc1.jpg') : (card.network === 'Visa' ? '/visa2.jpg' : '/mc2.jpg')}" alt="${card.network}">
-                                </div>
-                            </div>
-                        `).join('') : '<div class="empty-state">Нет карт на этом счёте</div>'}
-                    </div>
-                    ${account.cards.length < 3 ? `<button class="btn" id="issueCardFromModal" style="margin-top:16px">+ Выпустить новую карту</button>` : '<div style="background:rgba(239,68,68,0.2);padding:12px;border-radius:12px;text-align:center;margin-top:16px">❌ Достигнут лимит карт (3/3)</div>'}
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            const issueBtn = modal.querySelector('#issueCardFromModal');
-            if (issueBtn) {
-                issueBtn.addEventListener('click', () => {
-                    modal.remove();
-                    openIssueCardModal(accountId);
-                });
-            }
-        }
+    function renderSettings(container) {
+        container.innerHTML = `
+            <h2>Настройки</h2>
+            <div style="background:rgba(30,41,59,0.6);border-radius:20px;padding:20px;margin-top:16px">
+                <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px"><div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:24px">${(currentUser.name?.charAt(0) || 'U').toUpperCase()}</div><div><h3>${currentUser.name}</h3><p>${currentUser.email}</p></div></div>
+                <div><label style="color:#94a3b8">Ваш ID</label><input type="text" readonly value="${currentUser.id}" style="width:100%;background:#0f172a;border:none;padding:12px;border-radius:12px;color:white"></div>
+                <div><label style="color:#94a3b8">Телефон</label><input type="text" readonly value="${currentUser.phone}" style="width:100%;background:#0f172a;border:none;padding:12px;border-radius:12px;color:white"></div>
+                <button class="btn" id="logoutBtn" style="margin-top:20px;background:rgba(239,68,68,0.2);color:#f87171">Выйти</button>
+            </div>
+        `;
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            localStorage.clear();
+            location.reload();
+        });
+    }
 
-        function openIssueCardModal(accountId) {
-            let selectedNetwork = 'Visa';
-            let selectedDesign = 'design1';
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal active';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-overlay"></div>
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Выпустить карту</h3>
-                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
-                    </div>
-                    <div class="network-selector" id="networkSelector">
-                        <div class="network-option ${selectedNetwork === 'Visa' ? 'selected' : ''}" data-network="Visa">
-                            <div class="network-logo"><img src="/visa1.jpg" alt="Visa"></div>
-                            <div>Visa</div>
-                        </div>
-                        <div class="network-option ${selectedNetwork === 'Mastercard' ? 'selected' : ''}" data-network="Mastercard">
-                            <div class="network-logo"><img src="/mc1.jpg" alt="Mastercard"></div>
-                            <div>Mastercard</div>
-                        </div>
-                    </div>
-                    <div class="network-selector" id="designSelector">
-                        <div class="network-option ${selectedDesign === 'design1' ? 'selected' : ''}" data-design="design1">
-                            <div class="network-logo"><img src="${selectedNetwork === 'Visa' ? '/visa1.jpg' : '/mc1.jpg'}" alt="Design 1"></div>
-                            <div>Дизайн 1</div>
-                        </div>
-                        <div class="network-option ${selectedDesign === 'design2' ? 'selected' : ''}" data-design="design2">
-                            <div class="network-logo"><img src="${selectedNetwork === 'Visa' ? '/visa2.jpg' : '/mc2.jpg'}" alt="Design 2"></div>
-                            <div>Дизайн 2</div>
-                        </div>
-                    </div>
-                    <button class="btn" id="confirmIssueCard">Выпустить (бесплатно)</button>
-                    <div id="cardIssueMessage" class="message"></div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Выбор сети
-            modal.querySelectorAll('#networkSelector .network-option').forEach(opt => {
-                opt.addEventListener('click', () => {
-                    modal.querySelectorAll('#networkSelector .network-option').forEach(o => o.classList.remove('selected'));
-                    opt.classList.add('selected');
-                    selectedNetwork = opt.dataset.network;
-                    // Обновляем превью дизайнов
-                    const design1Img = modal.querySelector('#designSelector .network-option:first-child .network-logo img');
-                    const design2Img = modal.querySelector('#designSelector .network-option:last-child .network-logo img');
-                    if (design1Img) design1Img.src = selectedNetwork === 'Visa' ? '/visa1.jpg' : '/mc1.jpg';
-                    if (design2Img) design2Img.src = selectedNetwork === 'Visa' ? '/visa2.jpg' : '/mc2.jpg';
-                });
-            });
-            
-            // Выбор дизайна
-            modal.querySelectorAll('#designSelector .network-option').forEach(opt => {
-                opt.addEventListener('click', () => {
-                    modal.querySelectorAll('#designSelector .network-option').forEach(o => o.classList.remove('selected'));
-                    opt.classList.add('selected');
-                    selectedDesign = opt.dataset.design;
-                });
-            });
-            
-            modal.querySelector('#confirmIssueCard').addEventListener('click', async () => {
-                const result = await issueCard(currentUser.id, accountId, selectedNetwork, selectedDesign);
-                const msgDiv = modal.querySelector('#cardIssueMessage');
-                if (result.success) {
-                    msgDiv.innerHTML = '<div class="message success">Карта выпущена!</div>';
-                    setTimeout(() => {
-                        modal.remove();
-                        loadPage('accounts');
-                    }, 1500);
-                } else {
-                    msgDiv.innerHTML = `<div class="message error">${result.error}</div>`;
-                }
-            });
-        }
-
-        async function renderTransactions(container) {
-            const transactions = currentUser.transactions || [];
-            container.innerHTML = `
-                <h2 style="margin-bottom:20px">История операций</h2>
-                <div class="transactions-list" id="transactionsList"></div>
-            `;
-            
-            const listContainer = document.getElementById('transactionsList');
-            if (transactions.length) {
-                listContainer.innerHTML = transactions.map(tx => `
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-title">${tx.type === 'outgoing' ? `Перевод → ${tx.recipientName || tx.recipient}` : `Поступление от ${tx.senderName || tx.sender}`}</div>
-                            <div class="transaction-date">${new Date(tx.date).toLocaleString('ru-RU')}</div>
-                            ${tx.note ? `<div class="transaction-note">${tx.note}</div>` : ''}
-                        </div>
-                        <div class="transaction-amount ${tx.type === 'outgoing' ? 'negative' : 'positive'}">
-                            ${tx.type === 'outgoing' ? '-' : '+'}${tx.amount.toFixed(2)} ${tx.currency === 'Ÿ' ? 'WR' : '$'}
-                        </div>
-                    </div>
-                `).join('');
+    function openTransferModal() {
+        const modal = document.getElementById('transferModal');
+        const content = document.getElementById('transferModalContent');
+        content.innerHTML = `
+            <h3>Перевод</h3>
+            <div class="form-group"><label>Счёт списания</label><select id="txAccountId">${currentUser.accounts.map(a => `<option value="${a.id}">${a.currency} — ${a.balance.toFixed(2)}</option>`).join('')}</select></div>
+            <div class="form-group"><label>Получатель (ID)</label><input id="txRecipient" placeholder="ID получателя"></div>
+            <div class="form-group"><label>Сумма</label><input id="txAmount" type="number" step="0.01" placeholder="0.00"></div>
+            <div class="form-group"><label>Назначение</label><input id="txNote" placeholder="Необязательно"></div>
+            <button class="btn" id="doTransferBtn">Отправить</button>
+            <div id="txMsg" class="message"></div>
+            <button class="modal-close" style="margin-top:12px;background:none;border:none;color:#94a3b8">Закрыть</button>
+        `;
+        modal.classList.add('active');
+        document.getElementById('doTransferBtn')?.addEventListener('click', async () => {
+            const accId = document.getElementById('txAccountId').value;
+            const to = document.getElementById('txRecipient').value.trim();
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            const note = document.getElementById('txNote').value;
+            const msgDiv = document.getElementById('txMsg');
+            if (!to || isNaN(amount) || amount <= 0) { msgDiv.innerHTML = '<div class="message error">Заполните поля</div>'; return; }
+            const acc = currentUser.accounts.find(a => a.id === accId);
+            if (amount > acc.balance) { msgDiv.innerHTML = '<div class="message error">Недостаточно средств</div>'; return; }
+            msgDiv.innerHTML = '<div class="message">Отправка...</div>';
+            const result = await transferMoney(currentUser.id, to, amount, acc.currency, note, accId);
+            if (result.success) {
+                msgDiv.innerHTML = '<div class="message success">Перевод выполнен</div>';
+                setTimeout(() => { modal.classList.remove('active'); loadPage(currentPage); }, 1500);
             } else {
-                listContainer.innerHTML = '<div class="empty-state">Нет транзакций</div>';
+                msgDiv.innerHTML = `<div class="message error">${result.error}</div>`;
             }
-        }
+        });
+    }
 
-        function renderSettings(container) {
-            container.innerHTML = `
-                <h2 style="margin-bottom:20px">Настройки</h2>
-                <div class="profile-header">
-                    <div class="profile-avatar">${currentUser.avatar ? `<img src="${currentUser.avatar}">` : currentUser.name?.charAt(0).toUpperCase() || 'U'}</div>
-                    <div class="profile-info"><h3>${currentUser.name}</h3><p>${currentUser.email}</p></div>
-                </div>
-                <div style="background:rgba(30,41,59,0.6);border-radius:20px;padding:20px;margin-bottom:20px">
-                    <div class="form-group"><label>Ваш ID для переводов</label><input type="text" readonly value="${currentUser.id}" style="background:#0f172a;font-family:monospace"></div>
-                    <div class="form-group"><label>Телефон</label><input type="text" readonly value="${currentUser.phone}" style="background:#0f172a"></div>
-                    <div class="form-group"><label>Email</label><input type="email" readonly value="${currentUser.email}" style="background:#0f172a"></div>
-                    <button class="btn btn-danger" id="logoutBtn">Выйти из аккаунта</button>
-                </div>
-            `;
-            document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                localStorage.removeItem('yandex_token');
-                localStorage.removeItem('wr_current_user');
-                currentUser = null;
-                render();
-            });
-        }
+    function openAccountModal() {
+        const modal = document.getElementById('accountModal');
+        modal.classList.add('active');
+        document.getElementById('createAccBtn')?.addEventListener('click', async () => {
+            const currency = document.getElementById('newAccCurrency').value;
+            const result = await createAccount(currentUser.id, currency);
+            const msgDiv = document.getElementById('accMsg');
+            if (result.success) {
+                msgDiv.innerHTML = '<div class="message success">Счёт создан</div>';
+                setTimeout(() => { modal.classList.remove('active'); loadPage('accounts'); }, 1000);
+            } else {
+                msgDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        });
+    }
 
-        function openTransferModal() {
-            const modal = document.getElementById('transferModal');
-            const modalBody = document.getElementById('transferModalBody');
-            
-            modalBody.innerHTML = `
-                <div class="form-group">
-                    <label>Счёт списания</label>
-                    <select id="transferAccountId">
-                        ${currentUser.accounts.map(acc => `<option value="${acc.id}">${acc.currency} — ${acc.balance.toFixed(2)} ${acc.currency === 'Ÿ' ? 'WR' : '$'}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Получатель (ID или Email)</label>
-                    <input type="text" id="recipientId" placeholder="Введите ID или Email">
-                </div>
-                <div class="form-group">
-                    <label>Сумма</label>
-                    <input type="number" id="transferAmount" placeholder="0.00" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Назначение платежа (необязательно)</label>
-                    <input type="text" id="transferNote" placeholder="Например: оплата услуг">
-                </div>
-                <button class="btn" id="confirmTransferBtn">Отправить перевод</button>
-                <div id="transferMessage" class="message"></div>
-            `;
-            
-            modal.classList.add('active');
-            
-            document.getElementById('confirmTransferBtn')?.addEventListener('click', async () => {
-                const accountId = document.getElementById('transferAccountId').value;
-                const recipientId = document.getElementById('recipientId').value.trim();
-                const amount = parseFloat(document.getElementById('transferAmount').value);
-                const note = document.getElementById('transferNote').value;
-                const messageDiv = document.getElementById('transferMessage');
-                
-                const account = currentUser.accounts.find(a => a.id === accountId);
-                if (!account) {
-                    messageDiv.innerHTML = '<div class="message error">Счёт не найден</div>';
-                    return;
-                }
-                if (!recipientId) {
-                    messageDiv.innerHTML = '<div class="message error">Укажите получателя</div>';
-                    return;
-                }
-                if (isNaN(amount) || amount <= 0) {
-                    messageDiv.innerHTML = '<div class="message error">Введите сумму</div>';
-                    return;
-                }
-                if (amount > account.balance) {
-                    messageDiv.innerHTML = '<div class="message error">Недостаточно средств на счёте</div>';
-                    return;
-                }
-                
-                messageDiv.innerHTML = '<div class="message">Обработка...</div>';
-                
-                const result = await transferMoney(currentUser.id, recipientId, amount, account.currency, note, accountId);
-                
-                if (result.success) {
-                    messageDiv.innerHTML = '<div class="message success">Перевод выполнен!</div>';
-                    setTimeout(() => {
-                        modal.classList.remove('active');
-                        loadPage(currentPage);
-                    }, 1500);
-                } else {
-                    messageDiv.innerHTML = `<div class="message error">${result.error || 'Ошибка'}</div>`;
-                }
-            });
-        }
-
-        function openAccountModal() {
-            const modal = document.getElementById('accountModal');
-            modal.classList.add('active');
-            
-            document.getElementById('confirmCreateAccount')?.addEventListener('click', async () => {
-                const currency = document.getElementById('newAccountCurrency').value;
-                const messageDiv = document.getElementById('accountMessage');
-                
-                const result = await createAccount(currentUser.id, currency);
-                if (result.success) {
-                    messageDiv.innerHTML = '<div class="message success">Счёт создан!</div>';
-                    setTimeout(() => {
-                        modal.classList.remove('active');
-                        loadPage('accounts');
-                    }, 1500);
-                } else {
-                    messageDiv.innerHTML = `<div class="message error">${result.error}</div>`;
-                }
-            });
-        }
-
-        // Запуск
-        render();
-    </script>
+    // Запуск
+    render();
+</script>
 </body>
 </html>
