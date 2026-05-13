@@ -392,8 +392,8 @@
                         ${user.email || 'Нет email'} | ${user.phone || 'Нет телефона'}
                     </div>
                     <div style="margin-top:8px;display:flex;gap:8px">
-                        <span class="badge">💰 ${user.totalBalance.toFixed(2)} WR</span>
-                        <span class="badge">💳 ${user.accounts.reduce((s,a)=>s+a.cardsCount,0)} карт</span>
+                        <span class="badge">💰 ${(user.totalBalance || 0).toFixed(2)} WR</span>
+                        <span class="badge">💳 ${user.accounts?.reduce((s,a)=>s+(a.cardsCount||0),0) || 0} карт</span>
                     </div>
                 </div>
             `).join('');
@@ -436,7 +436,6 @@
         }
         
         if (currentTab === 'money') {
-            // Загружаем счета выбранного пользователя
             let accountsHtml = '<option value="">Сначала выберите пользователя</option>';
             if (selectedUserId) {
                 const userResult = await getUserById(selectedUserId);
@@ -593,8 +592,8 @@
         
         if (currentTab === 'stats') {
             const totalUsers = allUsers.length;
-            const totalBalance = allUsers.reduce((s, u) => s + u.totalBalance, 0);
-            const totalCards = allUsers.reduce((s, u) => s + u.accounts.reduce((a, acc) => a + acc.cardsCount, 0), 0);
+            const totalBalance = allUsers.reduce((s, u) => s + (u.totalBalance || 0), 0);
+            const totalCards = allUsers.reduce((s, u) => s + (u.accounts?.reduce((a, acc) => a + (acc.cardsCount || 0), 0) || 0), 0);
             const verifiedCount = allUsers.filter(u => u.isVerified).length;
             
             tabContent.innerHTML = `
@@ -618,4 +617,4 @@
     render();
 </script>
 </body>
-  </html>
+</html>
