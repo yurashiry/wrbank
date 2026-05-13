@@ -326,7 +326,7 @@
     let currentUser = null;
     let currentPage = 'dashboard';
 
-    // ========== РАБОТА С СЕРВЕРОМ ==========
+    // ========== РАБОТА С СЕРВЕРОМ (БЕЗ LOCALSTORAGE!) ==========
     async function callApi(action, data) {
         try {
             const response = await fetch(API_BASE_URL, {
@@ -341,40 +341,44 @@
         }
     }
 
-    async function loadUser(userId) {
+    async function loadUserFromServer(userId) {
         const result = await callApi('getUser', { userId });
-        if (result.success && result.user) return result.user;
+        if (result.success && result.user) {
+            return result.user;
+        }
         return null;
     }
 
-    async function saveUser(user) {
+    async function saveUserToServer(user) {
         return await callApi('saveUser', { userId: user.id, user });
     }
 
-    async function createAccount(userId, currency) {
+    async function createAccountOnServer(userId, currency) {
         return await callApi('createAccount', { userId, currency });
     }
 
-    async function issueCard(userId, accountId, network) {
+    async function issueCardOnServer(userId, accountId, network) {
         return await callApi('issueCard', { userId, accountId, network });
     }
 
-    async function blockCard(userId, cardId) {
+    async function blockCardOnServer(userId, cardId) {
         return await callApi('blockCard', { userId, cardId });
     }
 
-    async function closeCard(userId, cardId) {
+    async function closeCardOnServer(userId, cardId) {
         return await callApi('closeCard', { userId, cardId });
     }
 
-    async function transferMoney(senderId, recipientId, amount, currency, note, accountId) {
+    async function transferOnServer(senderId, recipientId, amount, currency, note, accountId) {
         return await callApi('transfer', { senderId, recipientId, amount, currency, note, accountId });
     }
 
     async function syncUser() {
         if (!currentUser) return null;
-        const fresh = await loadUser(currentUser.id);
-        if (fresh) currentUser = fresh;
+        const fresh = await loadUserFromServer(currentUser.id);
+        if (fresh) {
+            currentUser = fresh;
+        }
         return currentUser;
     }
 
@@ -418,31 +422,22 @@
         } else if (!currentUser) {
             document.getElementById('root').innerHTML = '<div class="loading">Загрузка...</div>';
             fetchYandexUser(token).then(async yUser => {
-                let user = await loadUser(yUser.id);
+                let user = await loadUserFromServer(yUser.id);
                 if (!user) {
-                    const newUser = {
-                        id: yUser.id,
-                        name: yUser.name,
-                        email: yUser.email,
-                        phone: yUser.phone,
-                        avatar: yUser.avatar,
-                        accounts: [
-                            { id: 'acc1', currency: 'Ÿ', balance: 1250.75, number: `WR${Math.floor(1000+Math.random()*9000)}${Math.floor(1000+Math.random()*9000)}`, cards: [] },
-                            { id: 'acc2', currency: '$', balance: 350.50, number: `WR${Math.floor(1000+Math.random()*9000)}${Math.floor(1000+Math.random()*9000)}`, cards: [] }
-                        ],
-                        transactions: []
-                    };
-                    await saveUser(newUser);
-                    user = newUser;
-                } else {
+                    // Новый пользователь — сервер сам создаст счета при первом getUser
+                    user = await loadUserFromServer(yUser.id);
+                }
+                if (user) {
                     user.name = yUser.name;
                     user.email = yUser.email;
                     user.phone = yUser.phone;
                     user.avatar = yUser.avatar;
-                    await saveUser(user);
+                    await saveUserToServer(user);
+                    currentUser = user;
+                    renderApp();
+                } else {
+                    renderLogin();
                 }
-                currentUser = user;
-                renderApp();
             }).catch(() => renderLogin());
         } else {
             renderApp();
@@ -658,7 +653,7 @@
         document.querySelectorAll('.block-card').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
-                await blockCard(currentUser.id, btn.dataset.cardId);
+                await blockCardOnServer(currentUser.id, btn.dataset.cardId);
                 await syncUser();
                 await renderAccounts(container);
             });
@@ -668,7 +663,7 @@
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 if (confirm('Закрыть карту?')) {
-                    await closeCard(currentUser.id, btn.dataset.cardId);
+                    await closeCardOnServer(currentUser.id, btn.dataset.cardId);
                     await syncUser();
                     await renderAccounts(container);
                 }
@@ -715,7 +710,7 @@
         });
         
         content.querySelector('#confirmIssueBtn')?.addEventListener('click', async () => {
-            const result = await issueCard(currentUser.id, accountId, selectedNetwork);
+            const result = await issueCardOnServer(currentUser.id, accountId, selectedNetwork);
             const msgDiv = document.getElementById('issueMsg');
             if (result.success) {
                 await syncUser();
@@ -767,7 +762,7 @@
             </div>
         `;
         document.getElementById('logoutBtn')?.addEventListener('click', () => {
-            localStorage.clear();
+            localStorage.removeItem('yandex_token');
             currentUser = null;
             render();
         });
@@ -794,7 +789,7 @@
         recipientInput?.addEventListener('input', async () => {
             const id = recipientInput.value.trim();
             if (id && id !== currentUser.id) {
-                const user = await loadUser(id);
+                const user = await loadUserFromServer(id);
                 if (user && user.name) {
                     previewDiv.style.display = 'block';
                     previewDiv.innerHTML = `👤 ${user.name}${user.isVerified ? ' ✓' : ''}`;
@@ -825,7 +820,7 @@
             }
             
             msgDiv.innerHTML = '<div class="message">Обработка...</div>';
-            const result = await transferMoney(currentUser.id, to, amount, acc.currency, note, accId);
+            const result = await transferOnServer(currentUser.id, to, amount, acc.currency, note, accId);
             
             if (result.success) {
                 await syncUser();
@@ -855,7 +850,7 @@
         
         document.getElementById('createAccBtn')?.addEventListener('click', async () => {
             const currency = document.getElementById('newAccCurrency').value;
-            const result = await createAccount(currentUser.id, currency);
+            const result = await createAccountOnServer(currentUser.id, currency);
             const msgDiv = document.getElementById('accMsg');
             if (result.success) {
                 await syncUser();
@@ -875,4 +870,4 @@
     render();
 </script>
 </body>
-   </html>
+</html>
